@@ -60,7 +60,7 @@
             li{
                 border-right: 1px solid grey;
                 padding: 0 10px;
-                border: none;
+                border-bottom: none;
             }
             main{
                 columns: 2;
