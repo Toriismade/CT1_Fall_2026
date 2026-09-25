@@ -28,6 +28,10 @@
             border-bottom: 1px solid grey;
         }
 
+        li:last-child {
+            border: none;
+        }
+
         h3{
             color: rgb(215, 122, 34);
         }
@@ -40,6 +44,35 @@
             color:darkgray;
             font-size: 12px;
             font-family: Arial, Helvetica, sans-serif;
+        }
+
+        @media (min-width: 744px){
+            header {
+                display: flex;
+                justify-content: space-between;
+            }
+            
+            ul{
+                flex-direction: row;
+                justify-content: end;
+            }
+
+            li{
+                border-right: 1px solid grey;
+                padding: 0 10px;
+                border: none;
+            }
+            main{
+                columns: 2;
+            }
+        }
+
+        @media (min-width: 968px){
+            main{
+                columns: 3;
+                width: 968px;
+                margin: auto;
+            }
         }
 
         
