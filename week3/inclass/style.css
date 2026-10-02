@@ -1,0 +1,27 @@
+html, body{
+    margin: 0;
+    width: 100vw;
+    height:100vh
+}
+
+.color-field{
+    background-color: rgb(228, 220, 206);
+    height: 300px;
+}
+
+header{
+    display: flex;
+    justify-content: flex-end;
+    background-color: rgb(214, 218, 55);
+    padding: 10px;
+}
+
+button{
+    padding: 10px;
+    border-radius: 32px;
+}
+
+img{
+    max-height: 100%;
+    max-width: 100%;
+}
