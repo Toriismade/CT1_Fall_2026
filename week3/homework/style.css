@@ -1,0 +1,45 @@
+body{
+    margin: 0;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button{
+    display: inline-flex;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    justify-content: center;
+    overflow: hidden;
+    width: 80px;
+    height: 80px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+header{
+    background-color: rgb(226, 229, 219);
+    margin: 0;
+    padding: 10px;
+}
+
+body{
+    background-color: rgb(226, 229, 219);
+}
+
+h1{
+    margin: 0;
+    font-family: "Monoton", sans-serif;
+    font-size: 80px;
+    color: white;
+}
+
+.small-image{
+    padding: 10px;
+    margin-top: 20px;
+}
+
