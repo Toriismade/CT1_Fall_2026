@@ -1,6 +1,6 @@
 let radius;
 const numRings = 3;
-let strWeight = 80;
+let strWeight = 60;
 let aWidth;
 let aHeight
 
