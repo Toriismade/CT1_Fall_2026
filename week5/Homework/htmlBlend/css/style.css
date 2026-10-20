@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+  background: #ffffff;
+}
+
+#bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  filter: blur(14px);
+  transform: scale(1.05);
+  pointer-events: none; /* Let wheel/mouse pass through to fg-container */
+}
+
+#fg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2; /* Sits directly in front */
+}
+
+canvas {
+  display: block;
+}
