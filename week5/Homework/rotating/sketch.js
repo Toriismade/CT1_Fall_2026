@@ -14,6 +14,7 @@ function draw() {
 
   // Smooth easing toward the target angle
   currentAngle = lerp(currentAngle, targetAngle, 0.08);
+  console.log(currentAngle);
 
   // Move origin to the screen center
   translate(width / 2, height / 2);
@@ -55,6 +56,7 @@ function draw() {
 
 // Map mouse scroll to wheel rotation
 function mouseWheel(event) {
+  console.log(event); 
   // event.delta gives scroll direction and magnitude
   targetAngle += event.delta * 0.002;
   // Prevent page default scroll
