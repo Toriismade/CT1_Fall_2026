@@ -1,0 +1,400 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Before We Blink UML</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: a single reading column for text, with each diagram free to run wider inside its own scroller. */
+:root {
+  --bg: #f3f6fc;
+  --surface: #ffffff;
+  --fg: #0d1f47;
+  --muted: #4c5d80;
+  --line: #c4cfe4;
+  --accent: #006d78;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #06102a; --surface: #0d1f47; --fg: #eaf0fc; --muted: #a5b5d4; --line: #2b4372; --accent: #00f0ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #06102a; --surface: #0d1f47; --fg: #eaf0fc; --muted: #a5b5d4; --line: #2b4372; --accent: #00f0ff;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 400 16px/1.55 var(--sans); }
+.page {
+  max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header { display: flex; flex-direction: column; gap: 8px; }
+h1 { margin: 0; font: 700 clamp(32px, 6vw, 46px)/1.05 var(--sans); letter-spacing: -.02em; text-wrap: balance; }
+h2 { margin: 0; font: 700 22px/1.25 var(--sans); text-wrap: balance; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); }
+section { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.kind { font: 500 12px/1.3 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+.diagram { overflow-x: auto; padding: 16px; background: var(--surface); border: 1px solid var(--line); }
+.diagram pre { margin: 0; min-width: min-content; text-align: center; font: 400 13px/1.4 var(--mono); }
+.states { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+.states > div { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+h3 { margin: 0; font: 500 15px/1.3 var(--sans); }
+code { font: 400 .92em var(--mono); }
+</style>
+
+<div class="page">
+  <header>
+    <h1>Before We Blink UML</h1>
+    <p class="lede">How the p5.js simulation is built: its parts, the states each one moves through, and what happens in one simulation step.</p>
+    <p class="lede">The code uses plain objects and functions, not JavaScript classes. Each class below groups the data and functions that belong together, using their names from the code.</p>
+  </header>
+
+  <section>
+    <span class="kind">Class diagram</span>
+    <h2>Parts of the system</h2>
+    <p><code>Round</code> holds everything in one run. Its Time Lords, Angels and crystals exist only for that run, and Reset builds a new <code>Round</code> from the current <code>Settings</code>.</p>
+    <div class="diagram"><pre class="mermaid">
+classDiagram
+  direction TB
+
+  class Settings {
+    +tl: 2..10
+    +wa: 2..10
+    +fov: 50..200 percent
+    +crystals: 3..20
+    +tlSpeed: 40..200
+    +waSpeed: 40..200
+    +storm: 60..300 s
+  }
+
+  class App {
+    -phase: Phase
+    -acc: number
+    +startRound()
+    +setPaused(on)
+    +openStory()
+    +finishRound()
+    +syncDirty()
+  }
+
+  class Round {
+    +cfg: Settings
+    +time: number
+    +elapsed: number
+    +delivered: number
+    +required: number
+    +reach: number
+    +halfArc: number
+    +winner: TL or WA
+    +reason: EndReason
+    +drained: number
+    +newRound(cfg)
+    -scatter(count, spacing, allowed)
+    +step(dt)
+    -planTimeLords()
+    -planAngels()
+    -anyView(x, y, r)
+  }
+
+  class Agent {
+    &lt;&lt;abstract&gt;&gt;
+    +x: number
+    +y: number
+    +vx: number
+    +vy: number
+    +trail: point list
+    +steer(tx, ty, maxSpeed, dt)
+    +halt()
+  }
+
+  class TimeLord {
+    +id: number
+    +e: energy, starts at 3
+    +view: angle
+    +carry: ZeitonCrystal or null
+    +role: Role
+    +aim: angle or null
+    +goal: point
+    +giveCd: number
+    +hasView()
+    +inView(x, y, r)
+    +giveEnergy(to)
+    +touchingAlly()
+  }
+
+  class WeepingAngel {
+    +id: number
+    +cool: 0..10 s
+    +seen: boolean
+    +goal: point or null
+    +canHunt()
+  }
+
+  class ZeitonCrystal {
+    +x: number
+    +y: number
+    +state: CrystalState
+    +by: TimeLord or null
+  }
+
+  class FloatText {
+    +x: number
+    +y: number
+    +txt: string
+    +col: string
+    +life: number
+  }
+
+  class Sketch {
+    &lt;&lt;p5 instance&gt;&gt;
+    -cols, rows: grid size
+    -buf: 1-bit pixel buffer
+    +setup()
+    +draw()
+    -fit()
+    -stamp(cx, cy, bitmap)
+    -drawZone()
+    -drawViews()
+    -drawZoneLabel()
+    -drawConsole()
+    -drawCrystals()
+    -drawAngels()
+    -drawLords()
+    -drawFloats()
+  }
+
+  class Hud {
+    -hudSig: string
+    +updateHud()
+    +statusText()
+  }
+
+  class Phase {
+    &lt;&lt;enumeration&gt;&gt;
+    intro
+    playing
+    paused
+    ended
+  }
+
+  class Role {
+    &lt;&lt;enumeration&gt;&gt;
+    runner
+    guard
+  }
+
+  class CrystalState {
+    &lt;&lt;enumeration&gt;&gt;
+    free
+    carried
+    delivered
+  }
+
+  class EndReason {
+    &lt;&lt;enumeration&gt;&gt;
+    escape
+    drained
+    storm
+  }
+
+  Agent <|-- TimeLord
+  Agent <|-- WeepingAngel
+  Round *-- "2..10" TimeLord
+  Round *-- "2..10" WeepingAngel
+  Round *-- "3..20" ZeitonCrystal
+  Round *-- "0..40" FloatText
+  App --> "1" Round : current run
+  App ..> Settings : reads on reset
+  Sketch ..> Round : advances and draws
+  Sketch ..> App : ends the run
+  Sketch ..> Hud : refreshes each frame
+  Hud ..> Round : reads
+  TimeLord "0..1" --> "0..1" ZeitonCrystal : carries
+  TimeLord ..> WeepingAngel : freezes
+  TimeLord ..> TimeLord : gives energy
+  WeepingAngel ..> TimeLord : drains energy
+  App ..> Phase
+  TimeLord ..> Role
+  ZeitonCrystal ..> CrystalState
+  Round ..> EndReason
+</pre></div>
+  </section>
+
+  <section>
+    <span class="kind">State machine diagrams</span>
+    <h2>How each part changes state</h2>
+    <p>An Angel's 10-second timer keeps running even if a Time Lord is also looking at it. It hunts again only when the timer is done and no view covers it.</p>
+    <div class="states">
+      <div>
+        <h3>Time Lord</h3>
+        <div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> HasView : starts in TARDIS zone
+  HasView --> Carrying : touches free crystal
+  Carrying --> HasView : reaches console
+  HasView --> Out : energy is 0
+  Carrying --> Out : energy is 0, drops crystal
+  Out --> [*]
+</pre></div>
+      </div>
+      <div>
+        <h3>Weeping Angel</h3>
+        <div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> Hunting : starts outside zone
+  Hunting --> FrozenByView : enters a view
+  FrozenByView --> Hunting : leaves every view
+  Hunting --> FrozenAfterFeeding : touches Time Lord, takes 1 energy
+  FrozenAfterFeeding --> Hunting : 10 s over, not in a view
+  FrozenAfterFeeding --> FrozenByView : 10 s over, in a view
+</pre></div>
+      </div>
+      <div>
+        <h3>Zeiton Crystal</h3>
+        <div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> free
+  free --> carried : Time Lord touches it
+  carried --> free : carrier runs out of energy
+  carried --> delivered : carrier reaches console
+  delivered --> [*]
+</pre></div>
+      </div>
+      <div>
+        <h3>Simulation run</h3>
+        <div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> intro : page loads
+  intro --> playing : Start simulation
+  playing --> paused : Pause or Story
+  paused --> playing : Resume or Reset
+  playing --> ended : a winner is set
+  ended --> playing : Run again or Reset
+</pre></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="kind">Sequence diagram</span>
+    <h2>One simulation step</h2>
+    <p>Each frame, <code>draw()</code> runs as many fixed steps of 1/60 s as the elapsed time needs, then updates the status display and redraws the field as a 1-bit pixel grid. The order inside a step decides the rules: views freeze Angels before any Angel can feed.</p>
+    <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  participant S as Sketch
+  participant R as Round
+  participant T as TimeLord
+  participant W as WeepingAngel
+  participant C as ZeitonCrystal
+  participant A as App
+  participant H as Hud
+
+  loop while a full step is due and there is no winner
+    S->>R: step(1/60 s)
+    R->>R: count down the storm
+    opt about every 0.55 s
+      R->>T: planTimeLords() sets role, goal, aim
+    end
+    opt every 0.08 s
+      R->>W: planAngels() sets goal
+    end
+    R->>T: move, spin view, give energy
+    R->>W: count down cool, check views, move if free
+    R->>W: check for contact with a Time Lord
+    W-->>T: take 1 energy, then cool = 10 s
+    R->>T: pick up or deliver crystals
+    T->>C: update state
+    R->>R: check escape, all drained, storm over
+  end
+  opt a winner is set
+    S->>A: finishRound()
+  end
+  S->>H: updateHud()
+  S->>S: fill the pixel buffer, then paint it to the canvas
+</pre></div>
+  </section>
+</div>
+
+<!--claude-mermaid-runtime-begin:3477-->
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="/_runtime/mermaid-11.16.1.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
+<!--claude-mermaid-runtime-end-->
+
+</body></html>
