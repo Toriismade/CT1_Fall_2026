@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hand Murmuration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.min.js"></script>
+  <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+</head>
+<body>
+  <div id="hud">
+    <h1>Murmuration</h1>
+    <p>Open palm — the flock sweeps wide loops</p>
+    <p>Close your fist — it gathers into a dense ball</p>
+    <p>Pinch — it flattens into a thin sheet</p>
+    <p>Tilt your hand — the flock wheels around</p>
+    <p>Quick swipe — a ripple of alarm runs through it</p>
+    <p>Two hands — split it in two</p>
+    <div class="keys">H hide text · G hand tracking · C camera preview · M wing sound</div>
+  </div>
+  <div id="status">Loading hand model…</div>
+
+  <script src="flock.js"></script>
+  <script src="sound.js"></script>
+  <script src="sketch.js"></script>
+</body>
+</html>
