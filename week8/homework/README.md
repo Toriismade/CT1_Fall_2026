@@ -4,6 +4,8 @@ A starling murmuration you steer with your hand, built with p5.js and ml5.js han
 
 **Live:** https://toriismade.github.io/CT1_Fall_2026/week8/homework/
 
+**Process:** https://toriismade.github.io/CT1_Fall_2026/week8/homework/process.html
+
 ## Files
 
 | File | Contents |
@@ -13,6 +15,7 @@ A starling murmuration you steer with your hand, built with p5.js and ml5.js han
 | `flock.js` | The starling flock simulation |
 | `sound.js` | Synthesized wingbeat sound |
 | `sketch.js` | p5.js setup and draw loop: hand tracking, gestures, rendering |
+| `process.html` | Process documentation: references, sketches, diagrams, prototype screenshots |
 
 ## Run
 
