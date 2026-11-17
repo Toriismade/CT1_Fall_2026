@@ -12,7 +12,6 @@ const NUM_BIRDS = 10;   // 鸟的数量
 
 // ---------- 1. 加载模型（在 setup 之前运行） ----------
 function preload() {
-  // flipped: true 表示镜像，你往右动手，画面里的手也往右
   handPose = ml5.handPose({ flipped: true });
 }
 
@@ -43,7 +42,7 @@ function gotHands(results) {
 
 // ---------- 3. 每一帧都运行（大约每秒 60 次） ----------
 function draw() {
-background(235, 205, 180);   // 用背景色盖掉上一帧
+ background(235, 205, 180);   // 用背景色盖掉上一帧
 
  image(video, 0, 0);
 
