@@ -1,13 +1,9 @@
-// =============================================
-// 简单版椋鸟群：鸟群会飞向你的食指指尖
-// =============================================
-
-let video;          // 摄像头画面
+let video;          
 let handPose;       // ml5 的手部识别模型
 let hands = [];     // 识别到的手（每帧更新）
-let birds = [];     // 所有的鸟都放在这个数组里
-
-const NUM_BIRDS = 10;   // 鸟的数量
+let birds = [];     
+let countSlider;     // ← 新加的：用来放"数量"滑块
+let seekSlider;
 
 
 // ---------- 1. 加载模型（在 setup 之前运行） ----------
@@ -19,6 +15,8 @@ function preload() {
 // ---------- 2. 初始化（只运行一次） ----------
 function setup() {
   createCanvas(640, 480);
+  countSlider = createSlider(1, 1000, 10, 10); 
+  seekSlider = createSlider(0, 0.1, 0.03, 0.005); 
 
   // 打开摄像头，但不把画面画出来
   video = createCapture(VIDEO, { flipped: true });
@@ -28,10 +26,7 @@ function setup() {
   // 开始识别手。每次识别出结果，就调用 gotHands
   handPose.detectStart(video, gotHands);
 
-  // 造 300 只鸟，用 push 一只一只放进 birds 数组
-  for (let i = 0; i < NUM_BIRDS; i++) {
-    birds.push(new Bird(random(width), random(height)));
-  }
+
 }
 
 // ml5 识别完会把结果交给这个函数
@@ -42,7 +37,9 @@ function gotHands(results) {
 
 // ---------- 3. 每一帧都运行（大约每秒 60 次） ----------
 function draw() {
- background(235, 205, 180);   // 用背景色盖掉上一帧
+ background(235, 205, 180); 
+
+
 
  image(video, 0, 0);
 
@@ -64,6 +61,16 @@ function draw() {
     circle(targetX, targetY, 10);
   }
 
+      // 鸟太少：一直加，直到数量等于滑块的值
+    while (birds.length < countSlider.value()) {
+      birds.push(new Bird(random(width), random(height)));
+    }
+
+    while (birds.length > countSlider.value()) {
+      birds.pop();
+    }
+
+
   // 让每只鸟：看邻居 → 飞向目标 → 移动 → 画出来
   for (let bird of birds) {
     bird.flock(birds);
@@ -71,6 +78,12 @@ function draw() {
     bird.update();
     bird.show();
   }
+
+  noStroke();
+  fill(255);                                       // 白色，在摄像头画面上更容易看清
+  text('count ' + countSlider.value(), 10, 20);    // count 后面加个空格
+  text('seek ' + seekSlider.value(), 10, 40);      // seek 后面加个空格
+
 }
 
 
@@ -133,9 +146,9 @@ class Bird {
       // 想要的速度：方向朝着目标，大小是 3
       let wantX = dx / d * 3;
       let wantY = dy / d * 3;
-      // 每帧只转一点点（3%），所以鸟会画着弧线飞过去
-      this.vx += (wantX - this.vx) * 0.03;
-      this.vy += (wantY - this.vy) * 0.03;
+
+      this.vx += (wantX - this.vx) * seekSlider.value();   
+      this.vy += (wantY - this.vy) * seekSlider.value();   
     }
   }
 
@@ -157,7 +170,6 @@ class Bird {
     this.y += this.vy;
   }
 
-  // 画成一个小黑点
   show() {
     let angle = atan2(this.vy, this.vx);   // 速度的方向（角度）
 

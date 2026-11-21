@@ -1,15 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Simple Murmuration</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.min.js"></script>
-  <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
-  <style>
-    body { margin: 0; background: #222; display: flex; justify-content: center; align-items: center; height: 100vh; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="style.css"
+    rel="stylesheet">
+    <title>Documentation</title>
 </head>
 <body>
-  <script src="sketch.js"></script>
+    <main>
+        <iframe src="ml5.html" style="width: 100%; aspect-ratio: 4 / 3; border: 0;"></iframe>
+        <h1>Documentation</h1>
+        <p class="p-regular">My goal of week 9 is to understand the code as much as possible. And try to do something with it by typing on my own.
+            To be honest, I have a hard time understanding the code. It's frustrating to see how fast it can be generated, and how slow am I when I try to type on my own. If it's a language learning, I'm like struggling with abc while I can tap a few buttons and generate Shakespeare's sonnet. But abc is good, I'm learning from it. Apologize to be so slow.
+        </p>
+        <h2>Simplify it with the help of LLM</h2>
+        <p class="p-regular">I simplifies the code by using large language model assistance. 
+            And to reach a clearer understanding of how it moves, I asked the LLM to change the representation of birds from spots to triangles.</p>
+            <img src="1.png" alt="code screenshot"  height="150px" >
+            <img src="2.png" alt="preview screenshot"  height="400px" >
+
+        <h2>Change the representation of handtracking</h2>
+        <p class="p-regular">The red ring is hard to see, so I change the circus appearance that represent where the hsands/fingers are.</p>
+            <img src="3.png" alt="preview screenshot"  height="400px" >
+            <img src="4.png" alt="code screenshot"  height="150px" >
+
+
+        <h2>Change the tracking finger</h2>
+        <p class="p-regular">Look for the ml5.js reference and change the number to [8] for the index finger tip.</p>
+            <img src="5.png" alt="preview screenshot"  height="400px" >
+        
+        <h2>Add a Slider</h2>
+        <p class="p-regular">For the better representation, I decide to add sliders to see what parameter leads to the best results. I didn't understand how it works when claude just bring out all the sliders. So I have it taught me how to add just one, the count slider.</p>
+            <img src="7.png" alt="code screenshot"  height="20px" >
+            <img src="8.png" alt="code screenshot"  height="20px" >
+            <img src="9.png" alt="code screenshot"  height="80px" >
+            <img src="10.png" alt="code screenshot"  height="50px" >
+        <img src="6.png" alt="preview screenshot"  height="400px" >
+
+        <h2>Add another Slider</h2>
+        <p class="p-regular">
+            I add another slider to control the seek parameter(WIll the flock dash to one's hand), to see if I understand it. 
+        </p>
+        <img src="12.png" alt="code screenshot"  height="80px" >
+        <img src="11.png" alt="preview screenshot"  height="400px" >
+
+        </main>
+
 </body>
 </html>
